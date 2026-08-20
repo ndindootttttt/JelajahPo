@@ -6,7 +6,7 @@ export default function Kategori() {
 
   const getKategori = async () => {
     try {
-      const res = await fetch("http://localhost:3001/kategori");
+      const res = await fetch("http://localhost:4000/kategori");
       const data = await res.json();
       setKategori(data);
     } catch (err) {
