@@ -24,11 +24,17 @@ export default function Wisata() {
   }, [])
 
 const handleDelete = async (id) => {
+
   if (window.confirm("Yakin ingin menghapus wisata ini?")) {
     try {
-      const res = await fetch(`http://localhost:5000/wisata/${id}`, {
+
+      const res = await fetch(`http://localhost:4000/wisata/${id}`, {
         method: "DELETE",
+         headers: {
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+  },
       });
+
       if (res.ok) {
         alert("Wisata berhasil dihapus");
         getWisata(); // ambil ulang data terbaru
