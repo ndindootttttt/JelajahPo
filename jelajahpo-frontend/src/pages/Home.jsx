@@ -1,3 +1,4 @@
 export default function Home() {
   return <h2>Selamat Datang di JelajahPo ✨ </ h2>;
+  <hr />
 }
