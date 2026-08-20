@@ -28,7 +28,13 @@ export default function EditWisata() {
 
    const handleSubmit = async (e) => {
     e.preventDefault();
-    await fetch(`http://localhost:5000/wisata/${id}`, {
+
+     const yakin = window.confirm("Yakin mau menyimpan perubahan ini?");
+
+  if (!yakin) {
+    return;
+  }
+    await fetch(`http://localhost:4000/wisata/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
