@@ -4,6 +4,8 @@ const cors = require('cors');
 const PORT = 4000;
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const authJWT = require('./middleware');
+const jwt = require('jsonwebtoken');
 const mysql = require('mysql2'); 
 
 const db = mysql.createConnection({
@@ -66,7 +68,7 @@ app.post('/wisata', (req, res) => {
   });
 });
 
-app.put('/wisata/:id_wisata', (req, res) => {
+app.put('/wisata/:id_wisata', authJWT, (req, res) => {
   const { id_wisata } = req.params;
   const { nama_wisata, deskripsi, harga_tiket, id_kategori } = req.body;
 
@@ -84,7 +86,7 @@ app.put('/wisata/:id_wisata', (req, res) => {
   });
 });
 
-app.delete('/wisata/:id_wisata', (req, res) => {
+app.delete('/wisata/:id_wisata',  authJWT, (req, res) => {
   const { id_wisata } = req.params;
   const sql = 'DELETE FROM wisata WHERE id_wisata = ?';
   db.query(sql, [id_wisata], (err, result) => {
@@ -131,6 +133,38 @@ app.post('/pengguna', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: 'Gagal mengenkripsi password' });
   }
+});
+
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+  const sql = 'SELECT * FROM pengguna WHERE email = ?';
+ 
+  db.query(sql, [email], (err, result) => {
+    if (err) return res.status(500).json({ error: err.sqlMessage });
+    if (result.length === 0) {
+      return res.status(404).json({ message: 'Akun tidak ditemukan' });
+    }
+ 
+    const user = result[0];
+    const passwordIsValid = bcrypt.compareSync(password, user.password);
+ 
+    if (!passwordIsValid) {
+      return res.status(401).json({ message: 'Password salah' });
+    }
+ 
+    const token = jwt.sign(
+      { id: user.id_pengguna },
+      'jelajahporahasia',
+      { expiresIn: 86400 }
+    );
+ 
+    res.status(200).json({
+      auth: true,
+      token,
+      id_pengguna: user.id_pengguna,
+      nama: user.nama
+    });
+  });
 });
 
 
