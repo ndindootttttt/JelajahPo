@@ -82,15 +82,20 @@ export default function AddWisata() {
 
         <div className="mb-3">
           <label className="form-label">ID Kategori</label>
-          <input
-            type="number"
+          <select
             name="id_kategori"
             value={formData.id_kategori}
             onChange={handleChange}
             className="form-control"
-            placeholder="Masukkan ID kategori"
             required
-          />
+          >
+             <option value="">-- Pilih Kategori --</option>
+             {kategori.map((item) => (
+                <option key={item.id_kategori} value={item.id_kategori}>
+                 {item.kategori}
+                </option>
+            ))}  
+            </select>
         </div>
 
         <button type="submit" className="btn btn-success">
