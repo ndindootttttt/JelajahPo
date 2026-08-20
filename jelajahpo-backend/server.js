@@ -4,6 +4,8 @@ const cors = require('cors');
 const PORT = 4000;
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const path = require('path');
+const multer = require('multer');
 const authJWT = require('./middleware');
 const jwt = require('jsonwebtoken');
 const mysql = require('mysql2'); 
@@ -25,6 +27,21 @@ db.connect(err => {
 
 app.use(cors());
 app.use(express.json())
+
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + '-' + file.originalname);
+  },
+});
+
+const upload = multer({ storage: storage });
  
 app.get('/', (req, res) => {
   res.send('Selamat Datang di JelajahPo API 💄 ');
@@ -47,9 +64,10 @@ app.get('/wisata/:id_wisata', (req, res) => {
   });
 });
 
-app.post('/wisata', (req, res) => {
+app.post('/wisata',  upload.single('file'), (req, res) => {
   const { nama_wisata, deskripsi, harga_tiket, id_kategori } = req.body;
-
+  const nama_file = req.file ? req.file.filename : null;
+  
   if (!nama_wisata || !harga_tiket) {
     return res.status(400).json({ message: 'Nama Wisata dan harga_tiket wajib diisi' });
   }
@@ -58,8 +76,8 @@ app.post('/wisata', (req, res) => {
     return res.status(400).json({ message: 'Deskripsi wajib diisi' });
   }
 
-  const sql = 'INSERT INTO wisata (nama_wisata, deskripsi, harga_tiket, id_kategori, tgl_input) VALUES (?, ?, ?, ?, NOW())';
-  db.query(sql, [nama_wisata, deskripsi, harga_tiket, id_kategori], (err, result) => {
+  const sql = 'INSERT INTO wisata (nama_wisata, deskripsi, harga_tiket, id_kategori, nama_file, tgl_input) VALUES (?, ?, ?, ?, ?, NOW())';
+  db.query(sql, [nama_wisata, deskripsi, harga_tiket, id_kategori, nama_file], (err, result) => {
     if (err) return res.status(500).json({ error: err.sqlMessage });
     res.json({
       message: 'Wisata berhasil ditambahkan!',
