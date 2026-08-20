@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function AddWisata() {
@@ -9,11 +9,29 @@ export default function AddWisata() {
     id_kategori: "",
   });
 
+  const [kategori, setKategori] = useState([]);
+
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+   const getKategori = async () => {
+  try {
+    const res = await fetch("http://localhost:4000/kategori");
+    const data = await res.json();
+    console.log("Data kategori:", data);
+    setKategori(data);
+  } catch (err) {
+    console.error("Gagal fetch kategori:", err);
+  }
+};
+
+useEffect(() => {
+  getKategori();
+}, []);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -80,23 +98,25 @@ export default function AddWisata() {
           />
         </div>
 
-        <div className="mb-3">
-          <label className="form-label">ID Kategori</label>
-          <select
-            name="id_kategori"
-            value={formData.id_kategori}
-            onChange={handleChange}
-            className="form-control"
-            required
-          >
-             <option value="">-- Pilih Kategori --</option>
-             {kategori.map((item) => (
-                <option key={item.id_kategori} value={item.id_kategori}>
-                 {item.kategori}
-                </option>
-            ))}  
-            </select>
-        </div>
+       <div className="mb-3">
+  <label className="form-label">Kategori</label>
+  <select
+  name="id_kategori"
+  value={formData.id_kategori}
+  onChange={handleChange}
+  className="form-select"
+  required
+>
+  <option value="">-- Pilih Kategori --</option>
+  {kategori.map((item) => (
+    <option key={item.id_kategori} value={item.id_kategori}>
+      {item.kategori}
+    </option>
+  ))}
+</select>
+
+</div>
+
 
         <button type="submit" className="btn btn-success">
           Simpan
