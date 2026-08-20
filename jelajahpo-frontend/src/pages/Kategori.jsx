@@ -1,4 +1,8 @@
 export default function Kategori() {
-  return <h2>Halaman Kategori</h2>;
-  <hr />
+  return (
+    <div className="container mt-4">
+       <h2>Halaman Kategori</h2>
+       <hr />  
+    </div>
+  )
 }

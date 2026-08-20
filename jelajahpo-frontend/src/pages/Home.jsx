@@ -1,4 +1,9 @@
 export default function Home() {
-  return <h2>Selamat Datang di JelajahPo ✨ </ h2>;
-  <hr />
+  return (
+    <div className="container mt-4">
+      <h2>Selamat Datang di JelajahPo ✨ </ h2>
+      <hr />   
+    </div>
+    
+  )
 }
