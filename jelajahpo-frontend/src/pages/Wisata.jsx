@@ -6,7 +6,7 @@ export default function Wisata() {
  
   const getWisata = async () => {
     try {
-      const res = await fetch("http://localhost:5000/wisata");
+      const res = await fetch("http://localhost:3001/wisata");
       const data = await res.json();
       setWisata(data);
     } catch (err) {
