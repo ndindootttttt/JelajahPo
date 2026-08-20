@@ -1,0 +1,102 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+export default function AddWisata() {
+  const [formData, setFormData] = useState({
+    nama_wisata: "",
+    deskripsi: "",
+    harga_tiket: "",
+    id_kategori: "",
+  });
+
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch("http://localhost:4000/wisata", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (res.ok) {
+        alert("Wisata berhasil ditambahkan!");
+        navigate("/wisata");
+      } else {
+        const data = await res.json();
+        alert(data.message || "Gagal menambah wisata");
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Terjadi kesalahan saat menambah wisata");
+    }
+  };
+
+  return (
+    <div className="container mt-4">
+      <h2 className="mb-3">Tambah Wisata ✨</h2>
+      <form onSubmit={handleSubmit} className="card p-4 shadow-sm">
+        <div className="mb-3">
+          <label className="form-label">Nama Wisata</label>
+          <input
+            type="text"
+            name="nama_wisata"
+            value={formData.nama_wisata}
+            onChange={handleChange}
+            className="form-control"
+            placeholder="Masukkan nama wisata"
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Deskripsi</label>
+          <textarea
+            name="deskripsi"
+            value={formData.deskripsi}
+            onChange={handleChange}
+            className="form-control"
+            placeholder="Masukkan deskripsi wisata"
+            required
+          ></textarea>
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">Harga Tiket</label>
+          <input
+            type="number"
+            name="harga_tiket"
+            value={formData.harga_tiket}
+            onChange={handleChange}
+            className="form-control"
+            placeholder="Masukkan harga tiket"
+            required
+          />
+        </div>
+
+        <div className="mb-3">
+          <label className="form-label">ID Kategori</label>
+          <input
+            type="number"
+            name="id_kategori"
+            value={formData.id_kategori}
+            onChange={handleChange}
+            className="form-control"
+            placeholder="Masukkan ID kategori"
+            required
+          />
+        </div>
+
+        <button type="submit" className="btn btn-success">
+          Simpan
+        </button>
+      </form>
+    </div>
+  );
+}
