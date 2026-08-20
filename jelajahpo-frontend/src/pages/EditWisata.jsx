@@ -11,7 +11,7 @@ export default function EditWisata() {
     id_kategori: "",
   });
   const [loading, setLoading] = useState(true);
- 
+  
   useEffect(() => {
     fetch(`http://localhost:4000/wisata/${id}`)
       .then((res) => res.json())
@@ -36,7 +36,8 @@ export default function EditWisata() {
   }
     await fetch(`http://localhost:4000/wisata/${id}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${localStorage.getItem("token")}`,
+     },
       body: JSON.stringify(formData),
     });
     alert("Wisata berhasil diperbarui!");
